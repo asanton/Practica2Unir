@@ -1,0 +1,18 @@
+﻿---
+
+- hosts:all
+  order: sorted
+  gather_facts: yes
+  become: true
+
+  tasks:
+  - name: Instalacion Ingress Controller (HaProxy)
+    command: kubectl apply -f "{{ (hostvars[inventory_hostname]['ingress_controller_ulr']) }}"
+
+
+  - name: Verificacion namespace Ingress Controller (HaProxy)
+    shell: kubectl get namespaces && kubectl get pods --namespace=haproxy-controller
+
+
+  - name: Verificacion Servicios (HaProxy)
+    command: kubectl get svc -A

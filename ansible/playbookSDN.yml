@@ -1,0 +1,47 @@
+﻿---
+
+- hosts:all
+  order: sorted
+  gather_facts: yes
+  become: true
+
+  tasks:
+  - name: Instalacion operador Tigera
+    command: kubectl create -f "{{ (hostvars[inventory_hostname]['tigera_url']) }}"
+
+
+  - name: Obtencion fichero definicion Calico
+    command: wget "{{ (hostvars[inventory_hostname]['calico_url']) }}"
+
+
+  - name: Configuracion Calico con CIDR personalizada
+    lineinfile:
+        path: ./custom-resources.yaml
+        line: "{{item}}"
+        state: present
+        create: yes
+    with_items:
+       - "# This section includes base Calico installation configuration."
+       - "# For more information, see: https://docs.projectcalico.org/v3.17/reference/installation/api#operator.tigera.io/v1.Installation"
+       - "apiVersion: operator.tigera.io/v1"
+       - "kind: Installation"
+       - "metadata:"
+       - "  name: default"
+       - "spec:"
+       - "  # Configures Calico networking."
+       - "  calicoNetwork:"
+       - "    # Note: The ipPools section cannot be modified post-install."
+       - "    ipPools:"
+       - "    - blockSize: 26"
+       - "      cidr: {{ (hostvars[inventory_hostname]['PODs_red']) }}"
+       - "      encapsulation: VXLANCrossSubnet"
+       - "      natOutgoing: Enabled"
+       - "      nodeSelector: all()"
+
+
+  - name: Instalacion Calico
+    command: kubectl apply -f custom-resources.yaml
+
+
+
+

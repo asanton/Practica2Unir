@@ -1,0 +1,32 @@
+all:
+  vars:
+    ansible_python_interpreter: '/usr/bin/python3'
+    docker_repo: 'https://download.docker.com/linux/centos/docker-ce.repo'
+    docker: 'docker-ce-19.03.14-3.el8 containerd.io'
+    kubernetes_baseurl: 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'
+    kubernetes_gpgkey: 'https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'
+    direcciones_ip:
+       - {"name": KubernetesMaster, "ip":192.168.1.71}
+       - {"name": KubernetesNode1,"ip":192.168.1.70}
+  children:
+     Kubernetes_Master:
+      vars:
+        PODs_red: '192.169.0.0/16'
+        ingress_controller_ulr: 'https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/v1.5/deploy/haproxy-ingress.yaml'
+        tigera_url: 'https://docs.projectcalico.org/manifests/tigera-operator.yaml'
+        calico_url: 'https://docs.projectcalico.org/manifests/custom-resources.yaml'
+      hosts:
+       KubernetesMaster:
+         ansible_host: '{{direcciones_ip[0].ip}}'
+         ansible_user: ansible
+     Kubernetes_Node1:
+      hosts:
+       KubernetesNode1:
+         ansible_host: '{{direcciones_ip[1].ip}}'
+         ansible_user: ansible
+     NFS:
+      hosts:
+       KubernetesNode1:
+         ansible_host: '{{direcciones_ip[1].ip}}'
+         ansible_user: ansible
+

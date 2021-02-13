@@ -1,0 +1,50 @@
+---
+# Tareas comunes para todas las maquinas a utilizar
+- hosts: all
+  order: sorted
+  gather_facts: yes
+  become: true
+
+
+  tasks:
+  - name: Hacer ping a las maquina
+    ping:
+
+
+  - name: Actualizacion de las maquina
+    command: dnf update -y
+
+
+  - name: Sincronizacion Horaria
+    shell: timedatectl set-timezone Europe/Madrid && timedatectl set-ntp true
+
+
+  - name: Desactivar SELinux
+    command: sed -i s/=enforcing/=disabled/g /etc/selinux/config
+
+
+  - name: Instalaciones (NFS-UTILS,NFS4-ACL-TOOLS,WGET,PYTHON3...)
+    dnf:
+        name: {{item}}
+        state: latest
+    with_items:
+       - chrony
+       - python3
+       - nfs-utils
+       - nfs4-acl-tools
+       - wget
+
+
+  - name: Activar Chrony
+    command: systemctl enable chronyd
+
+
+  - name: Actualizacion de las maquina
+    command: dnf update -y
+
+  - name: Visualizar Maquina
+    debug:
+      msg: "Maquina {{ansible_hostname}}"
+
+  - name: Reboot
+    reboot:

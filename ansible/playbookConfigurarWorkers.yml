@@ -1,0 +1,43 @@
+﻿---
+
+- hosts:all
+  order: sorted
+  gather_facts: yes
+  become: true
+
+  tasks:
+  - name: Instalaciones (NFS-UTILS,Net Tools...) 
+    dnf:
+        name: {{item}}
+        state: latest
+    with_items:
+       - nfs-utils
+       - net-tools
+
+  - name: Activacion e Inicio NFS Server
+    shell: systemctl enable nfs-server && systemctl start nfs-server
+
+
+  - name: Configurar Access Share (etc/exports)
+    lineinfile:
+        path: /etc/exports
+        line: 'srv/nfs     {{item.ip}}(rw,sync)'
+        backup: yes
+        create: yes
+    with_items: "{{ hostvars[inventory_hostname][direcciones_ip] }}"
+
+
+  - name: Releer etc/exports
+    shell: exportfs -r && exportfs -s
+
+
+  - name: Apertura Puertos Firewall
+    command: "firewall-cmd --permanent --add-service={{item}}" 
+    with_items:
+      - nfs
+      - rpc-bind
+      - mountd
+
+
+  - name: Recargar Firewall
+    shell: firewall-cmd --reload

@@ -1,0 +1,51 @@
+---
+
+- hosts: all
+  order: sorted
+  gather_facts: no
+  become: true
+
+  tasks:
+  - name: Display all variables/facts known for a host
+    debug:
+      var: hostvars[inventory_hostname]["direcciones_ip"][0].ip
+
+  - name: Add Lines to a File
+    lineinfile:
+       dest: /home/ansible/pruebaFile
+       line: "{{item}}"
+       state: present
+       create: yes
+    with_items:
+       - 'Hola'
+       - 'CAracola'
+       - 'Hola'
+
+  - name: Configuracion repositorio kubernetes
+    lineinfile:
+        path: /home/ansible/kubernetes
+        line: "{{item}}"
+        state: present
+        create: yes
+    with_items:
+       - "[kubernetes]"
+       - "name=Kubernetes"
+       - "baseurl={{ (hostvars[inventory_hostname]['kubernetes_baseurl']) }}"
+       - "enabled=1"
+       - "gpgcheck=1"
+       - "repo_gpgcheck=1"
+       - "gpgkey={{ (hostvars[inventory_hostname]['kubernetes_gpgkey']) }}"
+       - "exclude=kubelet kubeadm kubectl"
+
+  - name: configuracion red a fichero
+    shell: ip a > ficheroRed
+
+  - name: PRUEBA
+    lineinfile:
+        path: /home/ansible/pruebaTonta
+        line: 'srv/nfs     {{item.ip}}(rw,sync)'
+        backup: yes
+        create: yes
+    with_items: "{{ (hostvars[inventory_hostname]['direcciones_ip']) }}"
+
+

@@ -1,0 +1,48 @@
+﻿---
+
+- hosts:all
+  order: sorted
+  gather_facts: yes
+  become: true
+
+  tasks:
+  - name: Configuracion Firewall acceso servicios Kubernetes
+    command: firewall-cmd --permanent --add-port="{{item}}"
+    with_items:
+       - '6443/tcp'
+       - '2379-2380/tcp'
+       - '10250/tcp'
+       - '10251/tcp'
+       - '10252/tcp'
+       - '10255/tcp'
+
+  - name: Recarga Configuracion Firewall acceso servicios Kubernetes
+    command: firewall-cmd --reload
+
+  - name: Configuracion kubeadm
+    command: kubeadm config images pull
+
+# Ojo
+  - name: Configuracion Firewall acceso workers
+    command: firewall-cmd --permanent --add-rich-rule "{{item}}"
+    with_items:
+      - 'rule family=ipv4 source address={{ (hostvars[inventory_hostname]['direcciones_ip']) }}/32 accept'
+
+
+  - name: Recarga Configuracion Firewall acceso workers
+    command: firewall-cmd --reload
+
+
+  # Permitir acceso contenedores a localhost
+
+
+  - name: Instalar plugin CNI Kubernetes
+    command: kubeadm init --pod-network-cidr "{{ (hostvars[inventory_hostname]['PODs_red']) }}"
+    register: kubeadm_init_out
+
+  - name: Salida kubeadm
+    debug: 
+         msg="{{ kubeadm_init_out.stdout }}"
+
+  - name: Autorizar a root acceso al cluster
+    shell: mkdir -p /root/.kube && cp -i /etc/kubernetes/admin.conf /root/.kube/config && chown $(id -u):$(id -g) /root/.kube/config && kubectl get nodes
