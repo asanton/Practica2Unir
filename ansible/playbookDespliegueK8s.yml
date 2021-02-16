@@ -1,0 +1,39 @@
+---
+
+- hosts: all
+  order: sorted
+  gather_facts: yes
+  become: true
+  roles:
+    - antoniounir.configuracioncomun
+
+- hosts: NFS
+  order: sorted
+  gather_facts: true
+  become: true
+  roles:
+    - antoniounir.configuracionNFS
+
+
+- hosts: Kubernetes_Master,Kubernetes_Nodes
+  order: sorted
+  gather_facts: true
+  become: true
+  roles:
+    - antoniounir.configuracionK8sMasterWorkers
+
+
+- hosts: Kubernetes_Master
+  order: sorted
+  gather_facts: true
+  become: true
+  roles:
+    - antoniounir.configuracionK8sMaster
+
+
+- hosts: Kubernetes_Nodes
+  order: sorted
+  gather_facts: true
+  become: true
+  roles:
+    - antoniounir.configuracionK8sWorkers

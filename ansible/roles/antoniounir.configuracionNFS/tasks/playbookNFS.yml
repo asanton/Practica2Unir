@@ -1,0 +1,43 @@
+---
+#Tareas para el servidor NFS
+  - name: Instalaciones (NFS-UTILS,Net Tools...) 
+    dnf:
+        name: ['nfs-utils','net-tools']
+        state: latest
+
+  - name: Creacion Directorio Compartido
+    file:
+      path: "{{shared_dir}}"
+      state: directory
+
+
+  - name: Configurar Access Share (etc/exports)
+    lineinfile:
+        path: /etc/exports
+        line: "{{shared_dir}}     {{item.ip}}(rw,sync)"
+        state: present
+        create: yes
+    with_items: "{{ (hostvars[inventory_hostname]['direcciones_ip']) }}"
+
+
+  - name: Activacion e Inicio NFS Server
+    service: 
+      name: nfs-server
+      enabled: yes
+      state: started
+      
+
+  - name: Releer etc/exports
+    shell: exportfs -r && exportfs -s
+
+
+  - name: Apertura Puertos Firewall para servicios (NFS, RPC-BIND, MOUNTD)
+    firewalld:
+      service: "{{item}}"
+      permanent: yes
+      immediate : yes
+      state: enabled
+    with_items:
+        - "nfs"
+        - "rpc-bind"
+        - "mountd"

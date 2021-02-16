@@ -1,0 +1,3 @@
+---
+# tasks file for antoniounir.configuracioncomun
+- include_tasks: playbookConfiguraciones.yml

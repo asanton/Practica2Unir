@@ -1,17 +1,14 @@
-﻿---
+---
 
-- hosts:all
-  order: sorted
-  gather_facts: yes
-  become: true
 
-  tasks:
   - name: Instalacion operador Tigera
-    command: kubectl create -f "{{ (hostvars[inventory_hostname]['tigera_url']) }}"
+    command: kubectl create -f "{{ tigera_url }}"
 
 
   - name: Obtencion fichero definicion Calico
-    command: wget "{{ (hostvars[inventory_hostname]['calico_url']) }}"
+    command:
+         cmd: wget "{{ calico_url }}"
+         warn: no
 
 
   - name: Configuracion Calico con CIDR personalizada
@@ -33,7 +30,7 @@
        - "    # Note: The ipPools section cannot be modified post-install."
        - "    ipPools:"
        - "    - blockSize: 26"
-       - "      cidr: {{ (hostvars[inventory_hostname]['PODs_red']) }}"
+       - "      cidr: {{ PODs_red }}"
        - "      encapsulation: VXLANCrossSubnet"
        - "      natOutgoing: Enabled"
        - "      nodeSelector: all()"

@@ -1,0 +1,3 @@
+---
+# tasks file for antoniounir.configuracionNFS
+- include_tasks: playbookNFS.yml

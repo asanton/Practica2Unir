@@ -1,0 +1,3 @@
+---
+# vars file for antoniounir.configuracionK8sWorkers
+join_command: 'kubeadm join 192.168.1.70:6443 --token qcbhdx.lgh4oo5j2z80gxmh     '

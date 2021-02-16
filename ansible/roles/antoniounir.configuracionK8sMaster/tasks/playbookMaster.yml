@@ -1,0 +1,131 @@
+---
+
+  - name: Configuracion Firewall acceso servicios Kubernetes
+    firewalld:
+       port: "{{item}}"
+       permanent: yes
+       immediate : yes
+       state: enabled
+    with_items:
+       - "6443/tcp"
+       - "2379-2380/tcp"
+       - "10250/tcp"
+       - "10251/tcp"
+       - "10252/tcp"
+       - "10255/tcp"
+
+
+  - name: Recarga Configuracion Firewall acceso servicios Kubernetes
+    systemd:
+      name: firewalld
+      state: reloaded
+
+
+  - name: Configuracion kubeadm
+    command: kubeadm config images pull
+
+
+  - name: Configuracion Firewall acceso workers # Todas las ip menos las de master
+    firewalld:
+      rich_rule: rule family=ipv4 source address="{{item.ip}}"/32 accept
+      zone: public
+      permanent: yes
+      immediate : yes
+      state: enabled
+    when:
+      - "item.ip != (hostvars[inventory_hostname]['ansible_host'])"
+    with_items:
+      - "{{ (hostvars[inventory_hostname]['direcciones_ip']) }}"
+
+
+  - name: Recarga Configuracion Firewall acceso workers
+    systemd:
+      name: firewalld
+      state: reloaded
+
+
+  - name: Permitir acceso contenedores a localhost (Obtencion ip interfaz Docker)
+    shell: ip route | grep src | grep docker0 | awk '{print $1}'
+    register: ipDocker
+
+
+  - name: Permitir acceso contenedores a localhost (Reglas de Firewall)
+    firewalld:
+      rich_rule: rule family=ipv4 source address="{{ipDocker.stdout}}" accept
+      zone: public
+      permanent: yes
+      immediate : yes
+      state: enabled
+
+
+  - name: Recarga Configuracion Firewall acceso contenedores a localhost
+    systemd:
+      name: firewalld
+      state: reloaded
+
+
+  - name: Instalar plugin CNI Kubernetes con Tratamiento de error
+    block:
+     - name: Instalar plugin CNI Kubernetes y definimos la red de los PODs "{{ PODs_red }}"
+       command: kubeadm init --pod-network-cidr "{{ PODs_red }}"
+       register: kubeadm_init_out
+
+    rescue:
+     - name: Reset kubeadm debido a error
+       command: kubeadm reset -f
+
+     - name: Re-start Kubelet debido a error
+       systemd:
+          name: kubelet
+          daemon_reload: yes
+          state: restarted
+
+
+     - name: Instalar plugin CNI Kubernetes y definimos la red de los PODs "{{ PODs_red }}"
+       command: kubeadm init --pod-network-cidr "{{ PODs_red }}"
+       
+
+  - name: Autorizar a root acceso al cluster --> Crear Directorio
+    file:
+      path: /root/.kube
+      state: directory
+
+
+  - name: Autorizar a root acceso al cluster --> Copiar admin.conf
+    copy:
+       src: /etc/kubernetes/admin.conf
+       dest: /root/.kube/config
+       remote_src: yes
+       backup : yes
+
+
+  - name: Autorizar a root acceso al cluster --> Permisos
+    shell: chown $(id -u):$(id -g) /root/.kube/config
+
+
+  - name: Esperar a que Master este READY
+    shell: "/usr/bin/kubectl get nodes"
+    register: nodes
+    until:      
+      - '" Ready "  in nodes.stdout'      
+    retries: 10
+    delay: 3
+    
+  - name: Solicitar comando de union a cluster
+    command: kubeadm token create --print-join-command --v=6
+    register: comando_union
+
+
+  - name: Fichero con comandoUnion al Cluster
+    lineinfile:
+        dest: ./comandoUnionCluster
+        regexp: "join_command:"
+        line: "join_command: {{comando_union.stdout}}"
+        create: yes        
+  
+  - name: Feching fichero con comandoUnion al Cluster
+    fetch:
+      src: './comandoUnionCluster'
+      dest: './roles/antoniounir.configuracionK8sWorkers/vars/antonio.yml'
+      flat: yes
+

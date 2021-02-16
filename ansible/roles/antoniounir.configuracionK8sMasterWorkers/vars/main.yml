@@ -1,0 +1,6 @@
+---
+# vars file for antoniounir.configuracionK8sMasterWorkers
+docker_package: 'docker-ce-19.03.14-3.el8'
+docker_repo: 'https://download.docker.com/linux/centos/docker-ce.repo'
+kubernetes_baseurl: 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'
+kubernetes_gpgkey: 'https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'

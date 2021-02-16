@@ -10,6 +10,39 @@
     debug:
       var: hostvars[inventory_hostname]["direcciones_ip"][0].ip
 
+  - name: Comando
+    command: cat /etc/hosts
+    register: salida
+  
+  - name: Fichero
+    lineinfile:
+         dest: ./pruebaFetch
+         line: "{{salida.stdout}}"
+         create: yes         
+  
+  - name: Feching
+    fetch:
+         src: ./pruebaFetch
+         dest: ./pruebaFetch
+         flat: yes
+
+
+  - name: Echo
+    debug:
+      msg: "{{ (hostvars[inventory_hostname]['ansible_host']) }}"
+    
+  - name: Filtrado ip, todas menos la mia
+    lineinfile:
+       dest: /home/ansible/pruebaIp
+       line: "firewall-cmd --permanent --add-rich-rule rule family=ipv4 source address={{item.ip}}/32 accept"
+       state: present
+       create: yes
+    when:
+      - "item.ip != (hostvars[inventory_hostname]['ansible_host'])"
+    with_items:
+      - "{{ (hostvars[inventory_hostname]['direcciones_ip']) }}"
+    
+
   - name: Add Lines to a File
     lineinfile:
        dest: /home/ansible/pruebaFile
@@ -47,5 +80,13 @@
         backup: yes
         create: yes
     with_items: "{{ (hostvars[inventory_hostname]['direcciones_ip']) }}"
+
+  - name: Permitir acceso contenedores a localhost (Obtencion ip interfac Docker)
+    shell: ip -o -4 addr list enp0s3 | awk '{print $4}'
+    register: ipDocker
+
+  - name: Ip
+    debug:
+        msg: "Ip es: {{ipDocker}}"    
 
 

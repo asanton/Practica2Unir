@@ -1,0 +1,3 @@
+---
+# tasks file for antoniounir.configuracionK8sWorkers
+- include_tasks: playbookConfigurarWorkers.yml

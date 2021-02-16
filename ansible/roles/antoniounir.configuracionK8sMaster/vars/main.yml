@@ -1,0 +1,6 @@
+---
+# vars file for antoniounir.configuracionK8sMaster
+PODs_red: 192.169.0.0/16
+ingress_controller_ulr: 'https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/v1.5/deploy/haproxy-ingress.yaml'
+tigera_url: 'https://docs.projectcalico.org/manifests/tigera-operator.yaml'
+calico_url: 'https://docs.projectcalico.org/manifests/custom-resources.yaml'

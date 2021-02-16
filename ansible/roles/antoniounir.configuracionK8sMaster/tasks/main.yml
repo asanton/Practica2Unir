@@ -1,0 +1,5 @@
+---
+# tasks file for antoniounir.configuracionK8sMaster
+- include_tasks: playbookMaster.yml
+- include_tasks: playbookSDN.yml
+- include_tasks: playbookIngressController.yml

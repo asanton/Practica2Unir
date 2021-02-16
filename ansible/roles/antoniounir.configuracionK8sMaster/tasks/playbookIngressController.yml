@@ -1,0 +1,23 @@
+---
+
+  - name: Instalacion Ingress Controller (HaProxy)
+    command: kubectl apply -f "{{ ingress_controller_ulr }}"
+
+
+  - name: Verificacion namespace Ingress Controller (HaProxy)
+    shell: kubectl get namespaces && kubectl get pods --namespace=haproxy-controller
+    register: verificacionNamespacesIngress
+
+
+  - name: Namespace Ingress
+    debug:
+        msg:"{{verificacionNamespacesIngress.stdout}}"
+
+
+  - name: Verificacion Servicios (HaProxy)
+    command: kubectl get svc -A
+    register: veriticacionServiciosIngress
+
+  - name: Servicios Ingress
+    debug:
+        msg:"{{veriticacionServiciosIngress.stdout}}"
