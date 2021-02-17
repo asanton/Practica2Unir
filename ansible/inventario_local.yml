@@ -2,8 +2,8 @@ all:
   vars:
     ansible_python_interpreter: '/usr/bin/python3'
     direcciones_ip:
-       - {"name": KubernetesMaster, "ip":192.168.1.70, "url":master.local}
-       - {"name": KubernetesNode1,"ip":192.168.1.71, "url":node1.local}
+       - {"name": KubernetesMaster, "ip":192.168.1.70, "hostname":master.local}
+       - {"name": KubernetesNode1, "ip":192.168.1.71, "hostname":nodo1.local}
   children:
      Kubernetes_Master:
       hosts:

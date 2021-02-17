@@ -11,21 +11,23 @@
       var: hostvars[inventory_hostname]["direcciones_ip"][0].ip
 
   - name: Comando
-    command: cat /etc/hosts
-    register: salida
+    shell: cat {{item}} | tee -a resultado
+    with_items:
+      - '/etc/hosts'
+      - 'custom-resources.yaml'
+
+    
   
-  - name: Fichero
-    lineinfile:
-         dest: ./pruebaFetch
-         line: "{{salida.stdout}}"
-         create: yes         
+    
   
   - name: Feching
     fetch:
          src: ./pruebaFetch
-         dest: ./pruebaFetch
+         dest: 'roles/antoniounir.configuracionK8sWorkers/vars/anto.yml'
          flat: yes
+    register: fetch_output
 
+  - debug: var=fetch_output  
 
   - name: Echo
     debug:

@@ -41,3 +41,9 @@
         - "nfs"
         - "rpc-bind"
         - "mountd"
+
+
+  - name: Recarga Configuracion Firewall 
+    systemd:
+      name: firewalld
+      state: reloaded

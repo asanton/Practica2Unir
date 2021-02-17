@@ -1,0 +1,3 @@
+---
+# tasks file for antoniounir.despliegueAppK8s
+- include_tasks: despliegueAppK8s.yml

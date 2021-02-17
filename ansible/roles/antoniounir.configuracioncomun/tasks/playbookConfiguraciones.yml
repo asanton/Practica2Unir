@@ -32,6 +32,11 @@
       enabled: yes
       state: started
 
+  - name: Activar Firewalld
+    service:
+      name: firewalld
+      enabled: yes
+      state: started
 
 
   - name: Actualizacion de las maquina

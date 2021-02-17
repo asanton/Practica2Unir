@@ -1,5 +1,9 @@
 ---
 
+  - name: Reset kubeadm
+    command: kubeadm reset -f
+
+
   - name: Configuracion Firewall workers Kubernetes
     firewalld:
        zone: public
@@ -18,6 +22,15 @@
       state: reloaded
 
 
-#  - name: Union de worker al cluster
-#    command: "{{join_command}}"  
- 
+  - name: Copia el fichero con el comando de union al cluster a los workers
+    copy: src=./joinCommand dest=./joinCommand  
+
+
+  - name: Union de worker al cluster (Obtencion comando desde fichero ./joinCommand)
+    shell: cat ./joinCommand 
+    register: join_command
+
+  - name: Union de worker al cluster (Ejecucion de comando "{{join_command}}")
+    shell: "{{join_command.stdout}}"  
+
+

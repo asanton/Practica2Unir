@@ -1,0 +1,153 @@
+---
+#Tareas para el despliegue de una aplicacion
+  - name: Verificar si el namespace ya esta creado con tratamiento de errores
+    block:
+        - name: Verificar si el namespace ya esta creado
+          command: kubectl get namespaces "{{app_name}}"
+          register: verificacion
+    rescue:  
+        - debug: var=verificacion
+        
+        - name: Creacion del namespace
+          command: kubectl create namespace "{{app_name}}"
+          when:
+            - '" (NotFound)"  in verificacion.stderr'   
+
+
+  - name: Eliminar ficheros de despliegue anteriores
+    file:
+       path: "{{item}}"
+       state: absent
+    with_items:
+       - 'deploymentFile'
+       - 'serviceFile'
+       - 'ingressFile'
+       - 'configMapFile'
+       - '{{app_name}}.yml'
+
+
+  - name: Creacion del fichero de deployment
+    lineinfile:
+        path: deploymentFile
+        line: "{{item}}"
+        state: present
+        create: yes
+    with_items: 
+        - '---'
+        - '   '
+        - 'apiVersion: apps/v1'
+        - 'kind: Deployment'
+        - 'metadata:'
+        - '  name: {{app_name}}'
+        - '  namespace: {{app_name}}'
+        - '  labels:'
+        - '    app: {{app_name}}'
+        - 'spec:'
+        - '  replicas: {{num_replicas}}'
+        - '  selector:'
+        - '    matchLabels:'
+        - '      app: {{app_name}}'
+        - '  template:'
+        - '    metadata:'
+        - '      labels:'
+        - '         app: {{app_name}}'
+        - '    spec:'
+        - '      containers:'
+        - '      - name: {{app_name}}'
+        - '        image: {{url_img_app}}'
+        - '        ports:'
+        - '        - containerPort: 80'
+        - '        readinessProbe:'
+        - '          httpGet:'
+        - '            path: /'
+        - '            port: 80'
+        - '          initialDelaySeconds: 5'
+        - '          periodSeconds: 5'
+        - '          successThreshold: 1'
+
+
+  - name: Creacion del fichero del servicio
+    lineinfile:
+        path: serviceFile
+        line: "{{item}}"
+        state: present
+        create: yes
+    with_items: 
+        - '---'
+        - '   '
+        - 'apiVersion: v1'
+        - 'kind: Service'
+        - 'metadata:'
+        - '    name: {{app_name}}-service'
+        - '    namespace: {{app_name}}'
+        - 'spec:'
+        - '    selector:'
+        - '      app: {{app_name}}'
+        - '    ports:'
+        - '    - name: http'
+        - '      protocol: TCP'
+        - '      port: 80'
+        - '      targetPort: 80'
+# port hace referencia al puerto donde escuchará el servicio y targetPort indica el puerto donde se encuentra la aplicación dentro del contenedor.
+
+
+  - name: Creacion del fichero del ingress
+    lineinfile:
+        path: ingressFile
+        line: "{{item}}"
+        state: present
+        create: yes
+    with_items: 
+        - '---'
+        - '   '
+        - 'apiVersion: networking.k8s.io/v1'
+        - 'kind: Ingress'
+        - 'metadata:'
+        - '  name: {{app_name}}'
+        - '  namespace: {{app_name}}'
+        #- '  annotations:'
+        #- '      haproxy.org/path-rewrite: /'
+        - 'spec:'
+        - '  rules:'
+        - '  - host: {{host_name}}'
+        - '    http:'
+        - '      paths:'
+        - '      - path: {{app_path}}'
+        - '        pathType: Prefix'
+        - '        backend:'
+        - '          service:'
+        - '            name: {{app_name}}-service'
+        - '            port:'
+        - '              number: 80'
+
+
+  - name: Creacion de la Config Map
+    lineinfile:
+        path: configMapFile
+        line: "{{item}}"
+        state: present
+        create: yes
+    with_items:
+        - '---'
+        - '   '
+        - 'apiVersion: v1'
+        - 'kind: ConfigMap'
+        - 'metadata:'
+        - '  name: haproxy-configmap-{{app_name}}'
+        - '  namespace: {{app_name}}'
+        - 'data:'
+        - '  servers-increment: "42"'
+        - '  ssl-redirect: "OFF"'
+
+
+  - name: Crear fichero yaml Despliegue
+    shell: cat "{{item}}" | tee -a "{{app_name}}".yml
+    with_items:
+        - "deploymentFile"
+        - "serviceFile"
+        - "ingressFile"
+        - "configMapFile"
+
+
+  - name: Despliegue de la aplicacion
+    command: kubectl apply -f "{{app_name}}".yml

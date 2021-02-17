@@ -1,0 +1,7 @@
+---
+# vars file for antoniounir.despliegueAppK8s
+app_name: 'docker-2048'
+host_name: 'game.bar'
+app_path: '/'
+num_replicas: 2
+url_img_app: 'docker.io/alexwhen/docker-2048:latest'

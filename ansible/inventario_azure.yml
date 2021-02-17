@@ -1,0 +1,28 @@
+all:
+  vars:
+     ansible_python_interpreter: '/usr/bin/python3'
+     direcciones_ip:
+        - {"name": KubernetesMaster, "ip":40.114.223.171, "hostname":master.azure}
+        - {"name": KubernetesNFS, "ip":13.94.232.188, "hostname":nfs.azure}
+        - {"name": KubernetesNode1, "ip":104.214.225.123, "hostname":nodo1.azure}
+        - {"name": KubernetesNode2, "ip":13.80.68.175, "hostname":nodo2.local}
+  children:
+     Kubernetes_Master:
+      hosts:
+       KubernetesMaster:
+         ansible_host: '{{direcciones_ip[0].ip}}'
+         ansible_user: adminUsername
+     Kubernetes_Nodes:
+      hosts:
+       KubernetesNode1:
+         ansible_host: '{{direcciones_ip[2].ip}}'
+         ansible_user: adminUsername
+       KubernetesNode2:
+         ansible_host: '{{direcciones_ip[3].ip}}'
+         ansible_user: adminUsername
+     NFS:
+      hosts:
+       KubernetesNFS:
+         ansible_host: '{{direcciones_ip[1].ip}}'
+         ansible_user: adminUsername
+

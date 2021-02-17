@@ -1,1 +1,0 @@
-join_command: kubeadm join 192.168.1.70:6443 --token kvmv4u.q3e658o4wgncm7qy     --discovery-token-ca-cert-hash sha256:ed47b9f9db862e7192c7af1689a29a89852b29fd854df2123d97f184ab8355c7 

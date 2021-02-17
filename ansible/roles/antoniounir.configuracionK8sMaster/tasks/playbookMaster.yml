@@ -25,6 +25,10 @@
     command: kubeadm config images pull
 
 
+  - name: Reset kubeadm 
+    command: kubeadm reset -f
+
+
   - name: Configuracion Firewall acceso workers # Todas las ip menos las de master
     firewalld:
       rich_rule: rule family=ipv4 source address="{{item.ip}}"/32 accept
@@ -64,26 +68,16 @@
       state: reloaded
 
 
-  - name: Instalar plugin CNI Kubernetes con Tratamiento de error
-    block:
-     - name: Instalar plugin CNI Kubernetes y definimos la red de los PODs "{{ PODs_red }}"
-       command: kubeadm init --pod-network-cidr "{{ PODs_red }}"
-       register: kubeadm_init_out
+  - name: Instalar plugin CNI Kubernetes y definimos la red de los PODs "{{ PODs_red }}"
+    shell: kubeadm init --pod-network-cidr "{{ PODs_red }}" | tail -2 # Ultimas 2 lineas
+    register: kubeadm_init_out
 
-    rescue:
-     - name: Reset kubeadm debido a error
-       command: kubeadm reset -f
+  - name: Crear Fichero en el Ansible Controller
+    local_action:  file path=./joinCommand 
+ 
+  - name: Comando para unirse al cluster guardado en fichero ./joinCommand en el Ansible controller
+    local_action: copy content={{ kubeadm_init_out.stdout }} dest=./joinCommand
 
-     - name: Re-start Kubelet debido a error
-       systemd:
-          name: kubelet
-          daemon_reload: yes
-          state: restarted
-
-
-     - name: Instalar plugin CNI Kubernetes y definimos la red de los PODs "{{ PODs_red }}"
-       command: kubeadm init --pod-network-cidr "{{ PODs_red }}"
-       
 
   - name: Autorizar a root acceso al cluster --> Crear Directorio
     file:
@@ -108,24 +102,12 @@
     register: nodes
     until:      
       - '" Ready "  in nodes.stdout'      
-    retries: 10
-    delay: 3
+    retries: 20
+    delay: 5
     
-  - name: Solicitar comando de union a cluster
-    command: kubeadm token create --print-join-command --v=6
-    register: comando_union
 
+#  - name: Solicitar comando de union a cluster
+#    command: kubeadm token create --print-join-command
+#    register: comando_union
 
-  - name: Fichero con comandoUnion al Cluster
-    lineinfile:
-        dest: ./comandoUnionCluster
-        regexp: "join_command:"
-        line: "join_command: {{comando_union.stdout}}"
-        create: yes        
-  
-  - name: Feching fichero con comandoUnion al Cluster
-    fetch:
-      src: './comandoUnionCluster'
-      dest: './roles/antoniounir.configuracionK8sWorkers/vars/antonio.yml'
-      flat: yes
 
