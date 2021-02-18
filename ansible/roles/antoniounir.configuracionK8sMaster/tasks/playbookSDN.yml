@@ -40,5 +40,13 @@
     command: kubectl apply -f custom-resources.yaml
 
 
+  - name: Esperar a que Master este READY
+    shell: "/usr/bin/kubectl get nodes"
+    register: nodes
+    until:      
+      - '" Ready "  in nodes.stdout'      
+    retries: 50
+    delay: 10
+
 
 

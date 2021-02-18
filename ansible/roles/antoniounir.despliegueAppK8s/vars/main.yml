@@ -3,5 +3,5 @@
 app_name: 'docker-2048'
 host_name: 'game.bar'
 app_path: '/'
-num_replicas: 2
+num_replicas: 1
 url_img_app: 'docker.io/alexwhen/docker-2048:latest'

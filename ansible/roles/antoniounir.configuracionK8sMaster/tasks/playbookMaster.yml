@@ -73,7 +73,7 @@
     register: kubeadm_init_out
 
   - name: Crear Fichero en el Ansible Controller
-    local_action:  file path=./joinCommand 
+    local_action:  file path=./joinCommand state=touch 
  
   - name: Comando para unirse al cluster guardado en fichero ./joinCommand en el Ansible controller
     local_action: copy content={{ kubeadm_init_out.stdout }} dest=./joinCommand
@@ -97,13 +97,7 @@
     shell: chown $(id -u):$(id -g) /root/.kube/config
 
 
-  - name: Esperar a que Master este READY
-    shell: "/usr/bin/kubectl get nodes"
-    register: nodes
-    until:      
-      - '" Ready "  in nodes.stdout'      
-    retries: 20
-    delay: 5
+
     
 
 #  - name: Solicitar comando de union a cluster

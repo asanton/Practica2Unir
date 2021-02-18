@@ -2,40 +2,40 @@
 
   - name: Crear usuario
     user:
-       name: "{{user_cluster}}"
+       name: '{{user_cluster}}'
        comment: Usuario gestion cluster kubernetes
-       home: /home/"{{user_cluster}}"
+       home: '/home/{{user_cluster}}'
        group: wheel
        state: present
-       password: "{{pass_cluster}}"
+       password: '{{pass_cluster}}'
 
 
   - name: Creacion Directorio 
     file:
-      path: /home/"{{user_cluster}}"/.kube
+      path: '/home/{{user_cluster}}/.kube'
       state: directory
     register: outMk
 
   - debug: var=outMk
 
-  - name: Autorizar a "{{user_cluster}}" acceso al cluster --> Copiar admin.conf
+  - name: Autorizar a {{user_cluster}} acceso al cluster --> Copiar admin.conf
     copy:
        src: /etc/kubernetes/admin.conf
-       dest: /home/"{{user_cluster}}"/.kube/config
+       dest: '/home/{{user_cluster}}/.kube/config'
        remote_src: yes
 
 
-  - name: Autorizar a "{{user_cluster}}" acceso al cluster --> Permisos
-    shell: chown "{{user_cluster}}". /home/"{{user_cluster}}"/.kube/config
+  - name: Autorizar a {{user_cluster}} acceso al cluster --> Permisos
+    shell: chown {{user_cluster}}. /home/{{user_cluster}}/.kube/config
 
 
   - name: Configuracion repositorio kubernetes
     lineinfile:
-        path: /etc/sudoers.d/"{{user_cluster}}"
-        line: "{{item}}"
+        path: '/etc/sudoers.d/{{user_cluster}}'
+        line: '{{item}}'
         state: present
         create: yes
     with_items:
-       - "ALL            ALL = (ALL) NOPASSWD: ALL"
+       - 'ALL            ALL = (ALL) NOPASSWD: ALL'
 
       
