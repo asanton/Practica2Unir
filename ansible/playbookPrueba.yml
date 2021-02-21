@@ -4,8 +4,11 @@
   order: sorted
   gather_facts: no
   become: true
+  vars:
+    pass_cluster: kubeadmin
 
   tasks:
+
   - name: Display all variables/facts known for a host
     debug:
       var: hostvars[inventory_hostname]["direcciones_ip"][0].ip
@@ -16,8 +19,17 @@
       - '/etc/hosts'
       - 'custom-resources.yaml'
 
-    
-  
+  - name: Echo var
+    shell: echo {{pass_cluster}}  
+    register: echovar
+
+  - debug: var=echovar
+
+  - name: Generate Pass
+    shell: python3 -c 'import crypt,sys;print(crypt.crypt("{{pass_cluster}}", crypt.mksalt(crypt.METHOD_SHA512)))'
+    register: generatePass
+
+  - debug: var=generatePass
     
   
   - name: Feching

@@ -1,8 +1,14 @@
 ---
 # vars file for antoniounir.configuracionK8sMaster
-PODs_red: 192.169.0.0/16
-ingress_controller_ulr: 'https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/v1.5/deploy/haproxy-ingress.yaml'
+# CIDR para la red de PODs
+PODs_red: 192.169.0.0/16 
+# URL donde se encuentra el ingress
+ingress_controller_ulr: 'https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/v1.5/deploy/haproxy-ingress.yaml' 
+# URL donde se encuentra el operador
 tigera_url: 'https://docs.projectcalico.org/manifests/tigera-operator.yaml'
+# URL donde se encuentra calico
 calico_url: 'https://docs.projectcalico.org/manifests/custom-resources.yaml'
+# Usuario de acceso al cluster, para evitar accede con root
 user_cluster: kubeadmin
+# Usuario de acceso al cluster, para evitar accede con root
 pass_cluster: kubeadmin

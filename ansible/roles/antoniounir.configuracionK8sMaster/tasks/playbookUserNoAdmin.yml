@@ -1,5 +1,12 @@
 ---
+    #https://stackoverflow.com/questions/41887491/python-usage-of-crypt-function
+    #Hay que generar el pass cifrado ya que el modulo user de ansible asi lo requiere  
+    # Dado python 3 esta instalado en la maquina se puede utilizar
+  - name: Generate Pass
+    shell: python3 -c 'import crypt,sys;print(crypt.crypt("{{pass_cluster}}", crypt.mksalt(crypt.METHOD_SHA512)))'
+    register: generatePass
 
+    # Se crea el usuario y se añade al grupo wheel
   - name: Crear usuario
     user:
        name: '{{user_cluster}}'
@@ -7,7 +14,9 @@
        home: '/home/{{user_cluster}}'
        group: wheel
        state: present
-       password: '{{pass_cluster}}'
+       generate_ssh_key: yes
+       ssh_key_bits: 2048
+       password: '{{generatePass.stdout}}'
 
 
   - name: Creacion Directorio 

@@ -1,5 +1,9 @@
 ---
-#Tareas para el despliegue de una aplicacion
+# Tareas para el despliegue de una aplicacion
+# Revisar el fichero de variables a configurar para este rol(roles\antoniounir.despliegueAppK8s\vars\main.yml)
+
+
+#Como paso previo a la creacion del namespace, se verifica si ya exite, en cuyo caso se elimina
   - name: Verificar si el namespace ya esta creado con tratamiento de errores
     block:
         - name: Verificar si el namespace "{{app_name}}" ya esta creado
@@ -21,21 +25,78 @@
             - '" (NotFound)"  in verificacion.stderr'   
 
 
+#Se eliminan los ficheros de despliegue generados anteriormente
   - name: Eliminar ficheros de despliegue anteriores
     file:
        path: "{{item}}"
        state: absent
     with_items:
-       - 'deploymentFile'
-       - 'serviceFile'
-       - 'ingressFile'
-       - 'configMapFile'
+       - 'persistenVolumneFile-{{app_name}}'
+       - 'persistenVolumneClaimFile-{{app_name}}'
+       - 'deploymentFile-{{app_name}}'
+       - 'serviceFile-{{app_name}}'
+       - 'ingressFile-{{app_name}}'
+       - 'configMapFile-{{app_name}}'
        - '{{app_name}}.yml'
+
+
+
+  - name: Creacion del fichero para el Persisten Volume
+    lineinfile:
+        path: 'persistenVolumneFile-{{app_name}}'
+        line: "{{item}}"
+        state: present
+        create: yes
+    with_items: 
+        - '---'
+        - '   '
+        - 'apiVersion: v1'
+        - 'kind: PersistentVolume'
+        - 'metadata:'
+        - '  name: {{app_name}}-nfs-pv'
+        - '  namespace: {{app_name}}'
+        - 'spec:'
+        - '  capacity:'
+        - '    storage: 8Gi'
+        - '  volumeMode: Filesystem'
+        - '  accessModes:'
+        - '    - ReadWriteMany'
+        - '  persistentVolumeReclaimPolicy: Recycle'
+        - '  storageClassName: nfs'
+        - '  mountOptions:'
+        - '    - hard'
+        - '    - nfsvers=4.1'
+        - '  nfs:'
+        - '    path: {{shared_dir}}'
+        - '    server: {{server_nfs_ip}}'
+
+
+  - name: Creacion del fichero para el Persisten Volume Claim
+    lineinfile:
+        path: 'persistenVolumneClaimFile-{{app_name}}'
+        line: "{{item}}"
+        state: present
+        create: yes
+    with_items: 
+        - '---'
+        - '   '
+        - 'apiVersion: v1'
+        - 'kind: PersistentVolumeClaim'
+        - 'metadata:'
+        - '  name: {{app_name}}-nfs-pvc'
+        - '  namespace: {{app_name}}'
+        - 'spec:'
+        - '  storageClassName: nfs'
+        - '  accessModes:'
+        - '    - ReadWriteMany'
+        - '  resources:'
+        - '    requests:'
+        - '      storage: 2Gi'
 
 
   - name: Creacion del fichero de deployment
     lineinfile:
-        path: deploymentFile
+        path: 'deploymentFile-{{app_name}}'
         line: "{{item}}"
         state: present
         create: yes
@@ -75,7 +136,7 @@
 
   - name: Creacion del fichero del servicio
     lineinfile:
-        path: serviceFile
+        path: 'serviceFile-{{app_name}}'
         line: "{{item}}"
         state: present
         create: yes
@@ -100,7 +161,7 @@
 
   - name: Creacion del fichero del ingress
     lineinfile:
-        path: ingressFile
+        path: 'ingressFile-{{app_name}}'
         line: "{{item}}"
         state: present
         create: yes
@@ -130,7 +191,7 @@
 
   - name: Creacion de la Config Map
     lineinfile:
-        path: configMapFile
+        path: 'configMapFile-{{app_name}}'
         line: "{{item}}"
         state: present
         create: yes
@@ -150,10 +211,12 @@
   - name: Crear fichero yaml Despliegue
     shell: cat "{{item}}" | tee -a "{{app_name}}".yml
     with_items:
-        - "deploymentFile"
-        - "serviceFile"
-        - "ingressFile"
-        - "configMapFile"
+        - 'persistenVolumneFile-{{app_name}}'
+        - 'persistenVolumneClaimFile-{{app_name}}'
+        - "deploymentFile-{{app_name}}"
+        - "serviceFile-{{app_name}}"
+        - "ingressFile-{{app_name}}"
+        - "configMapFile-{{app_name}}"
 
 
   - name: Despliegue de la aplicacion

@@ -11,6 +11,7 @@ variable "vm_size" {
   #default = "Standard_D1_v2" # 3.5 GB, 1 CPU 
 }
 
+#Identificamos las maquinas a crear, en este caso 2, master y worker01
 variable "vms" {
   description = "Maquinas Virtuales a crear"
   default = ["master","worker01"]  // default = ["master","nfs","worker01","worker02"] Tenemos limitacion y solo el master necesita 2 cpu

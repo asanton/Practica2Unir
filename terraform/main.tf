@@ -1,5 +1,5 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
-
+# Utilizamos el provider de terraform para Azure
 terraform {
   required_providers {
     azurerm = {
@@ -18,8 +18,11 @@ terraform {
 #  tenant_id       = "<TENANT>"
 #}
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group
 
+
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group
+# Creamos grupo de recursos
 resource "azurerm_resource_group" "rg" {
     name     =  "kubernetes_rg_asanton"
     location = var.location
@@ -32,7 +35,6 @@ resource "azurerm_resource_group" "rg" {
 
 # Storage account
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account
-
 #resource "azurerm_storage_account" "stAccountASA" {
 #    name                     = "50734617staccount" 
 #    resource_group_name      = azurerm_resource_group.rg.name
