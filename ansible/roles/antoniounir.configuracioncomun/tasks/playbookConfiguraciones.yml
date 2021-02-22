@@ -1,4 +1,17 @@
 ---
+# Tareas para la configuracion comun de las máquinas, sea cual sea su rol.
+# Tareas forman parte del rol antoniounir.configuracioncomun.
+# No hace uso de fichero de variables.
+# Tareas a realizar:
+# - Hacer ping a las máquinas.Módulo ping de Ansible.
+# - Actualización de las máquinas. Módulo dnf de Ansible.
+# - Sincronización horaria. Módulo shell de Ansible.  
+# - Desactivar SE Linux. Módulo command de Ansible.
+# - Instalar elementos comunes en las máquinas ('chrony','python3','nfs-utils','nfs4-acl-tools','wget').Módulo dnf de Ansible.
+# - Activar servicio chrony. Módulo service de Ansible.
+# - Activar servicio firewalld. Módulo service de Ansible.
+# - Actualización de las máquinas. Módulo dnf de Ansible.
+# - Reiniciar las maquinas.Módulo reeboot de Ansible.
 
   - name: Hacer ping a las maquina
     ping:

@@ -1,3 +1,5 @@
 ---
 # vars file for antoniounir.configuracionNFS
+# Variable necesaria para el despliegue de un servidor NFS
+#     shared_dir --> Directorio compartido                                    Ejemplo --> shared_dir: '/srv/nfs'
 shared_dir: '/srv/nfs'

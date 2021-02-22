@@ -1,5 +1,16 @@
 ---
-#Tareas para el servidor NFS
+# Tareas para la configuracion del nodo que tendrá el rol de servisor NFS.
+# Tareas forman parte del rol antoniounir.configuracionNFS.
+# Revisar el fichero de variables a configurar para este rol(roles\antoniounir.configuracionNFS\vars\main.yml).
+# Tareas a realizar:
+# - Instalar paquetes necesarios ('nfs-utils','net-tools').Módulo dnf de Ansible.
+# - Crear directorio compartido.Módulo file de Ansible.
+# - Configurar acceso compartido.Fichero /etc/exports.Módulo lineinfile de Ansible.
+# - Activar e iniciar el servicio nfs-server.Módulo service de Ansible.
+# - Recargar fichero /etc/exports.Módulo shell de Ansible.
+# - Apertura puerto del firewall para servicios(NFS, RPC-BIND, MOUNTD).Módulo firewalld de Ansible.
+# - Recargar el firewall tras la apertura de puertos.Módulo systemd de Ansible
+
   - name: Instalaciones (NFS-UTILS,Net Tools...) 
     dnf:
         name: ['nfs-utils','net-tools']

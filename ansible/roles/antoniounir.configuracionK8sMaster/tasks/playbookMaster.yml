@@ -1,5 +1,25 @@
 ---
-
+# Tareas para la configuracion del nodo master del clúster de Kubernetes
+# Tareas forman parte del rol antoniounir.configuracionK8sMaster
+# Revisar el fichero de variables a configurar para este rol(roles\antoniounir.configuracionK8sMaster\vars\main.yml)
+# Tareas a realizar:
+# - Abrir los puertos necesarios en el firewal. Módulo firewalld de Ansible
+# - Recargar el firewall tras la apertura de puertos.Módulo systemd de Ansible
+# - Configuracion de kubeadm. Módulo command de Ansible
+# - Reset de kubeadm. Módulo command de Ansible
+#   Lo utilizo pq, en ocasiones, tenia problemas con puertos abiertos
+# - Abrir reglas en el firewal para el acceso de los nodos worker. Módulo firewalld de Ansible
+# - Recargar el firewall tras la apertura de reglas.Módulo systemd de Ansible
+# - Obtenemos del rango de ips de la interfaz de docker0. Módulo shell de Ansible
+# - Abrir reglas en el firewal para el rango de ip de la interfaz docker. Para que puedan todos acceder al nodo master.Módulo firewalld de Ansible
+# - Recargar el firewall tras la apertura de reglas.Módulo systemd de Ansible
+# - Inicializamos en CNI de Kubernetes para la red de PODs definida. Módulo command de Ansible
+#   Me quedo con las 2 ultimas lineas de la salida del comando, que es la url de union al clúster que deben ejecutar los workers
+# - Crear un fichero, en el Ansible controller, donde guardaré la url de union al clúster. Directiva local_action módulo file de Ansible  
+# - Guardar en el fichero creado anteriormente, ./joinCommand, la url de union al clúster. Directiva local_action módulo copy de Ansible 
+# - Crear el directorio .kube en el directorio del usuario root. Módulo file de Ansible
+# - Autorizar al usuario root acceso al clúster.Copiar el fichero /etc/kubernetes/admin.conf al home/root/.kube/config.Módulo copy de Ansible
+# - Autorizar al usuario root acceso al clúster.Otorgar Permisos.Módulo shell de Ansible
   - name: Configuracion Firewall acceso servicios Kubernetes
     firewalld:
        port: "{{item}}"
@@ -69,7 +89,7 @@
 
 
   - name: Instalar plugin CNI Kubernetes y definimos la red de los PODs "{{ PODs_red }}"
-    shell: kubeadm init --pod-network-cidr "{{ PODs_red }}" | tail -2 # Ultimas 2 lineas
+    shell: kubeadm init --pod-network-cidr "{{ PODs_red }}" | tail -2 # Ultimas 2 lineas que son las que tienen la url de union al master
     register: kubeadm_init_out
 
   - name: Crear Fichero en el Ansible Controller

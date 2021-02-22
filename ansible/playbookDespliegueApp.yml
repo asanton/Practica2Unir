@@ -1,6 +1,6 @@
 ---
 # Playbook que se encarga de ejecutar las tareas asociadas al rol antoniounir.despliegueAppK8s
-# Dicho rol se encarga de desplegar la aplicacion en el cluster de kubernetes
+# Dicho rol se encarga de desplegar la aplicacion en el cluster de kubernetes previamente creado
 # Revisad playbooks de roles\antoniounir.despliegueAppK8s\tasks
 # Revisad variables de roles\antoniounir.despliegueAppK8s\vars
 - hosts: Kubernetes_Master

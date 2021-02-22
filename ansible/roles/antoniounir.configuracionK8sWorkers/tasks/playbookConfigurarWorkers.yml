@@ -1,5 +1,16 @@
 ---
-
+# Tareas para la configuracion de los nodos worker del clúster de Kubernetes
+# Tareas forman parte del rol antoniounir.configuracionK8sMaster
+# Revisar el fichero de variables a configurar para este rol(roles\antoniounir.configuracionK8sMaster\vars\main.yml)
+# Tareas a realizar:
+# - Reset de kubeadm. Módulo command de Ansible
+#   Lo utilizo pq, en ocasiones, tenia problemas con puertos abiertos
+# - Abrir los puertos necesarios en el firewal. Módulo firewalld de Ansible
+# - Recargar el firewall tras la apertura de puertos.Módulo systemd de Ansible
+# - Copiar el fichero generado al configurar el master (./joinCommand) del Ansible Controller a los workers
+#   Este fichero tiene la url de union al master
+# - Unir los workers al master
+#   Para ello se hace manda el contenido del fichero a una variable
   - name: Reset kubeadm
     command: kubeadm reset -f
 

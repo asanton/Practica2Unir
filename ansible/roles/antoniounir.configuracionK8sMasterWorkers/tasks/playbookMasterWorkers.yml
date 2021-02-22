@@ -1,5 +1,20 @@
 ---
-#Tareas comunes a realizar en el master y los workers
+# Tareas para la configuracion común a los nodos master y workers del clúster de Kubernetes
+# Tareas forman parte del rol antoniounir.configuracionK8sMasterWorkers
+# Revisar el fichero de variables a configurar para este rol(roles\antoniounir.configuracionK8sMasterWorkers\vars\main.yml)
+# Tareas a realizar:
+# - Permitir resoluxion DNS, añadiendo las ips de los nodos al fichero /etc/hosts. Módulo lineinfile de Ansible
+# - Activar Trasparent Masquerade (modProbe). Módulo command de Ansible
+# - Activar Trasparent Masquerade (Firewall). Módulo firewalld de Ansible
+# - Recargar el firewall tras la activacion del masquerade. Módulo systemd de Ansible
+# - Configurar k8s.conf.Trafico cortafuegos. Módulo lineinfile de Ansible
+# - Desactivar Swap. Módulo command de Ansible
+# - Eliminar Swap en el arranque (etc/fstab).Módulo lineinfile de Ansible
+# - Establecer repositorio de docker. Módulo command de Ansible
+# - Instalar Docker. Módulo dnf de Ansible
+# - Iniciar Docker. Módulo service de Ansible
+# - Instalar Kubernetes. Módulo dnf de Ansible
+# - Iniciar Kubernetes. Módulo service de Ansible
   - name: Resolucion DNS (etc/hosts)
     lineinfile:
         path: /etc/hosts
@@ -75,7 +90,7 @@
         state: present  
 
 
-  - name: Inicio de Docker
+  - name: Iniciar de Docker
     service: 
       name: docker
       enabled: yes

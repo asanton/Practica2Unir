@@ -1,5 +1,10 @@
 ---
 # vars file for antoniounir.configuracionK8sMasterWorkers
+# Variables necesarias para el despliegue tanto de master como de workers en el cluster de kubernetes
+#     docker_package --> Paquete de docker a instalar                                     Ejemplo --> docker_package: 'docker-ce-19.03.14-3.el8'
+#     docker_repo --> Repositorio de Docker                                               Ejemplo --> docker_repo: 'https://download.docker.com/linux/centos/docker-ce.repo'
+#     kubernetes_baseurl --> URL de Kubernetes                                            Ejemplo --> kubernetes_baseurl: 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'
+#     kubernetes_gpgkey --> URL de las gpkey de Kubernetes                                Ejemplo --> kubernetes_gpgkey: 'https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'
 docker_package: 'docker-ce-19.03.14-3.el8'
 docker_repo: 'https://download.docker.com/linux/centos/docker-ce.repo'
 kubernetes_baseurl: 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'
