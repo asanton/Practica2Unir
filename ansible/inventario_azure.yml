@@ -1,3 +1,6 @@
+# Inventario para despliegue en azure
+# Importante configurar variable direcciones_ip con la ip y hostname de cada nodo
+# Importante asignar correctamente cada ip a cada ansible_host
 all:
   vars:
      ansible_python_interpreter: '/usr/bin/python3'

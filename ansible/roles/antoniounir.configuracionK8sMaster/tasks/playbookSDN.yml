@@ -1,5 +1,14 @@
 ---
-
+# Tareas para la instalacion de una SDN (calico en nuestro caso) en Kubernetes
+# Tareas forman parte del rol antoniounir.configuracionK8sMaster
+# Revisar el fichero de variables a configurar para este rol(roles\antoniounir.configuracionK8sMaster\vars\main.yml)
+# Tareas a realizar:
+# - Instalar el operador definido(Tigera en nuestro caso). Módulo command de Ansible
+# - Obtener el fichero de definiciond ela SDN.Módulo command de Ansible
+# - Configurar la SDN con la CIDR personalizada. Módulo lineinfile de Ansible
+# - Instalar la SDN.Módulo command de Ansible
+# - Esperar a que el mastes este Ready.Módulo shell de Ansible
+#   Hacemos 50 intentos,esperando 10 segundos entre intentos
 
   - name: Instalacion operador Tigera
     command: kubectl create -f "{{ tigera_url }}"

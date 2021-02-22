@@ -1,23 +1,29 @@
 ---
-
+# Tareas para la instalacion de un ingress controller (En nuestro caso HaProxy)
+# Tareas forman parte del rol antoniounir.configuracionK8sMaster
+# Revisar el fichero de variables a configurar para este rol(roles\antoniounir.configuracionK8sMaster\vars\main.yml)
+# Tareas a realizar:
+# - Instalar el ingress controller. Módulo command de Ansible
   - name: Instalacion Ingress Controller (HaProxy)
     command: kubectl apply -f "{{ ingress_controller_ulr }}"
 
 
-  - name: Verificacion namespace Ingress Controller (HaProxy)
+  - name: Verificacion namespaces  
     shell: kubectl get namespaces && kubectl get pods --namespace=haproxy-controller
     register: verificacionNamespacesIngress
 
-
-  - name: Namespace Ingress
-    debug:
-        msg:"{{verificacionNamespacesIngress.stdout}}"
+  - debug: var=verificacionNamespacesIngress
 
 
-  - name: Verificacion Servicios (HaProxy)
+  - name: Verificacion pods para namespace haproxy-controller
+    shell: kubectl get pods --namespace=haproxy-controller
+    register: verificacionPods
+
+  - debug: var=verificacionPods
+
+
+  - name: Verificacion Servicios
     command: kubectl get svc -A
-    register: veriticacionServiciosIngress
+    register: veriticacionServicios
 
-  - name: Servicios Ingress
-    debug:
-        msg:"{{veriticacionServiciosIngress.stdout}}"
+  - debug: var=veriticacionServicios

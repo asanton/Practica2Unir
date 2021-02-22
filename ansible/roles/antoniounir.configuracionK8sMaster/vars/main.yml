@@ -1,14 +1,15 @@
 ---
 # vars file for antoniounir.configuracionK8sMaster
-# CIDR para la red de PODs
-PODs_red: 192.169.0.0/16 
-# URL donde se encuentra el ingress
+# Variables necesarias para las tareas del rol antoniounir.configuracionK8sMaster
+#     PODs_red --> CIDR para la red de PODs                                               Ejemplo --> PODs_red: 192.169.0.0/16
+#     ingress_controller_ulr --> Url donde se encuentra el ingress controller(haproxy)    Ejemplo --> ingress_controller_ulr: 'https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/v1.5/deploy/haproxy-ingress.yaml'
+#     tigera_url --> Url donde se encuentra el operador (en nuestro caso tigera)          Ejemplo --> tigera_url: 'https://docs.projectcalico.org/manifests/tigera-operator.yaml'
+#     calico_url --> Url donde se encuentra la SDN (en nuestro caso calico)               Ejemplo --> calico_url: 'https://docs.projectcalico.org/manifests/custom-resources.yaml'
+#     user_cluster --> Identificador del usuario a crear para gestionar el clúster        Ejemplo --> user_cluster: kubeadmin
+#     pass_cluster --> Password del usuario a crear para gestionar el clúster             Ejemplo --> pass_cluster: kubeadmin
+PODs_red: 192.169.0.0/16
 ingress_controller_ulr: 'https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/v1.5/deploy/haproxy-ingress.yaml' 
-# URL donde se encuentra el operador
 tigera_url: 'https://docs.projectcalico.org/manifests/tigera-operator.yaml'
-# URL donde se encuentra calico
 calico_url: 'https://docs.projectcalico.org/manifests/custom-resources.yaml'
-# Usuario de acceso al cluster, para evitar accede con root
 user_cluster: kubeadmin
-# Usuario de acceso al cluster, para evitar accede con root
 pass_cluster: kubeadmin

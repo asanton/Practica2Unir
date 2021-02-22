@@ -1,4 +1,30 @@
 ---
+# Playbook que se encarga de ejecutar las tareas asociadas para desplegar un cluster de kubernetes con un master, workers y un servidor nfs, como se definan en el inventario
+# Para ello dispone de los roles:
+#    - antoniounir.configuracioncomun
+#      Se encarga de realizar las tareas de configuracion comunes a todas las maquinas del inventario
+#      Revisad playbooks de roles\antoniounir.configuracioncomun\tasks
+#      Revisad variables de roles\antoniounir.configuracioncomun\vars
+# 
+#    - antoniounir.configuracionNFS
+#      Se encarga de realizar las tareas de configuracion asociada al servidor NFS
+#      Revisad playbooks de roles\antoniounir.configuracionNFS\tasks
+#      Revisad variables de roles\antoniounir.configuracionNFS\vars
+#
+#    - antoniounir.configuracionK8sMasterWorkers
+#      Se encarga de realizar las tareas de configuracion comunes asociadas a todos los elementos que forman el cluster de Kubernetes
+#      Revisad playbooks de roles\antoniounir.configuracionK8sMasterWorkers\tasks
+#      Revisad variables de roles\antoniounir.configuracionK8sMasterWorkers\vars
+#
+#    - antoniounir.configuracionK8sMaster
+#      Se encarga de realizar las tareas de configuracion exclusivas asociadas al nodo master que forma el cluster de Kubernetes
+#      Revisad playbooks de roles\antoniounir.configuracionK8sMaster\tasks
+#      Revisad variables de roles\antoniounir.configuracionK8sMaster\vars
+#
+#    - antoniounir.configuracionK8sWorkers
+#      Se encarga de realizar las tareas de configuracion exclusivas asociadas al/los nodo/nodos worker que forman el cluster de Kubernetes
+#      Revisad playbooks de roles\antoniounir.configuracionK8sWorkers\tasks
+#      Revisad variables de roles\antoniounir.configuracionK8sWorkers\vars
 
 - hosts: all
   order: sorted

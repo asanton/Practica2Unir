@@ -1,9 +1,21 @@
 ---
-# Tareas para el despliegue de una aplicacion
+# Tareas para el despliegue de una aplicacion en el cluster de kubernetes
+# Tareas forman parte del rol antoniounir.despliegueAppK8s
 # Revisar el fichero de variables a configurar para este rol(roles\antoniounir.despliegueAppK8s\vars\main.yml)
+# Tareas a realizar:
+# - Creacion del namespaces asociado a la aplicacion
+#   Como paso previso se comprueba si dicho namespaces esta ya creado, en cuyo caso se borra
+# - Eliminan los ficheros de despligue asociados a la aplicacion anteriores
+# - Se crean los ficheros asociados a cada elemento:
+#          - Se crea el fichero con la definicion del Persistent Volumne
+#          - Se crea el fichero con la definicion del Persistent Volumne Claim
+#          - Se crea el fichero con la definicion del Deployment
+#          - Se crea el fichero con la definicion del Service
+#          - Se crea el fichero con la definicion del Ingress
+#          - Se crea el fichero con la definicion del ConfigMap
+# - Se crea el fichero de despligue de la aplicacion uniendo todos los ficheros anteriores
+# - Se despliega la aplicacion a partir del fichero .yml generado
 
-
-#Como paso previo a la creacion del namespace, se verifica si ya exite, en cuyo caso se elimina
   - name: Verificar si el namespace ya esta creado con tratamiento de errores
     block:
         - name: Verificar si el namespace "{{app_name}}" ya esta creado
@@ -94,7 +106,7 @@
         - '      storage: 2Gi'
 
 
-  - name: Creacion del fichero de deployment
+  - name: Creacion del fichero de Deployment
     lineinfile:
         path: 'deploymentFile-{{app_name}}'
         line: "{{item}}"
@@ -134,7 +146,7 @@
         - '          successThreshold: 1'
 
 
-  - name: Creacion del fichero del servicio
+  - name: Creacion del fichero del Servicio
     lineinfile:
         path: 'serviceFile-{{app_name}}'
         line: "{{item}}"

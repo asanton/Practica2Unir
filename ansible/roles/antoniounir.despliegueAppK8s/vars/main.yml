@@ -1,9 +1,18 @@
 ---
 # vars file for antoniounir.despliegueAppK8s
-app_name: 'docker-2048'  #Nombre de la aplicacion a desplegar
-host_name: 'game.bar'    #Virtual Host que resolverá el master hacia nuestra aplicacion
-app_path: '/' # Path de la aplicacion
-num_replicas: 2 # Numero de Replicas a generar
-url_img_app: 'docker.io/alexwhen/docker-2048:latest' # URL de la Imagen Docker de la aplicacion
-shared_dir: '/srv/nfs' # Path al NFS compartido
-server_nfs_ip: '192.168.1.71' # Dirección ip del servidor de NFS
+# Variables necesarias para el despliegue de una aplicación en el cluster de kubernetes
+#     app_name --> Nombre de la aplicación a desplegar                                    Ejemplo --> app_name: 'docker-2048'
+#     host_name --> Virtual Host que resolverá el master hacia nuestra aplicación         Ejemplo --> host_name: 'game.bar'
+#     app_path --> Path de la aplicación                                                  Ejemplo --> app_path: '/' 
+#     num_replicas --> Numero de Replicas a generar                                       Ejemplo --> num_replicas: 2 
+#     url_img_app --> URL de la Imagen Docker de la aplicación                            Ejemplo --> url_img_app: 'docker.io/alexwhen/docker-2048:latest'
+#     shared_dir -->  Path al NFS compartido                                              Ejemplo --> shared_dir: '/srv/nfs'
+#     server_nfs_ip --> Dirección ip del servidor de NFS                                  Ejemplo --> server_nfs_ip: '192.168.1.71'
+
+app_name: 'docker-2048'
+host_name: 'game.bar'
+app_path: '/'
+num_replicas: 2
+url_img_app: 'docker.io/alexwhen/docker-2048:latest'
+shared_dir: '/srv/nfs'
+server_nfs_ip: '192.168.1.71'

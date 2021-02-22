@@ -1,7 +1,16 @@
 ---
-    #https://stackoverflow.com/questions/41887491/python-usage-of-crypt-function
-    #Hay que generar el pass cifrado ya que el modulo user de ansible asi lo requiere  
-    # Dado python 3 esta instalado en la maquina se puede utilizar
+# Tareas para la creacion de un usuario que pueda gestionar el clúster de Kubernetes sin tener que ser root
+# Tareas forman parte del rol antoniounir.configuracionK8sMaster
+# Revisar el fichero de variables a configurar para este rol(roles\antoniounir.configuracionK8sMaster\vars\main.yml)
+# Tareas a realizar:
+# - Generar el pass cifrado del usuario. Módulo shell de Ansible
+#   El módulo user de Ansible requiere que el password vaya cifrado
+#   Ya que en las maquinas esta instalado python3 me decanto por la opcion de usar el modulo crypt de pythos
+#   https://stackoverflow.com/questions/41887491/python-usage-of-crypt-function
+# - Crear el usuario.Módulo user de Ansible
+# - Crear el directorio .kube en el directorio del usuario creado. Módulo file de Ansible
+# - Autorizar al usuario creado acceso al cluster.Copiar el fichero /etc/kubernetes/admin.conf al home/usuario/.kube/config.Módulo copy de Ansible
+# - Autorizar al usuario creado acceso al cluster.Otorgar Permisos.Módulo shell de Ansible
   - name: Generate Pass
     shell: python3 -c 'import crypt,sys;print(crypt.crypt("{{pass_cluster}}", crypt.mksalt(crypt.METHOD_SHA512)))'
     register: generatePass
@@ -46,5 +55,3 @@
         create: yes
     with_items:
        - 'ALL            ALL = (ALL) NOPASSWD: ALL'
-
-      
